@@ -1,0 +1,33 @@
+{
+    "background": false,
+    "log-file": null,
+    "access-log-file": null,
+    "retries": 5,
+    "retry-pause": 5,
+    "coin": "xmr",
+    "custom-diff": 0,
+    "syslog": false,
+    "verbose": true,
+    "colors": false,
+    "workers": true,
+    "nicehash": false,
+    "keepalive": true,
+    "debug": true,
+    "redis-host": "redis",
+    "pools": [
+        {
+            "url": "pool.supportxmr.com:3333",
+            "user": "47sw4cyAWYSFmapjFBoQoZ733igsFCGZe2jR9x8hbVET962xjpNqDVg8tAcGG9wfAmW8KoV9KS3BDeSMR8zinJdy1p1r5vB",
+            "pass": "xrp-01:alexis@ww.net"
+        }
+    ],
+    "bind": [
+        "0.0.0.0:1111",
+        "0.0.0.0:3333"
+    ],
+    "api": {
+        "port": 8080,
+        "access-token": "0CYHsC6wtpBtLAxBfX9lzH31Ji6Witiw",
+        "worker-id": null
+    }
+}

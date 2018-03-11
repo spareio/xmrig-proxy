@@ -38,6 +38,9 @@
 #   include <microhttpd.h>
 #endif
 
+#ifndef XMRIG_NO_REDIS
+#   include <eredis.h>
+#endif
 
 #include "donate.h"
 #include "net/Url.h"
@@ -87,8 +90,13 @@ Options:\n\
       --api-access-token=T access token for API\n\
       --api-worker-id=ID   custom worker-id for API\n\
   -h, --help               display this help and exit\n\
-  -V, --version            output version information and exit\n\
-";
+  -V, --version            output version information and exit\n"
+# ifndef XMRIG_NO_REDIS
+"\
+    --redis-host=ADDR      redis hostname\n\
+    --redis-port=N         redis port\n"
+# endif
+;
 
 
 static char const short_options[] = "c:khBp:Px:r:R:s:T:o:u:O:Vl:Sb:A:";
@@ -121,6 +129,10 @@ static struct option const options[] = {
     { "userpass",         1, nullptr, 'O'  },
     { "verbose",          0, nullptr, 1100 },
     { "version",          0, nullptr, 'V'  },
+# ifndef XMRIG_NO_REDIS
+    { "redis-host",       1, nullptr, 6000 },
+    { "redis-port",       1, nullptr, 6001 },
+# endif
     { 0, 0, 0, 0 }
 };
 
@@ -140,6 +152,10 @@ static struct option const config_options[] = {
     { "user-agent",       1, nullptr, 1008 },
     { "verbose",          0, nullptr, 1100 },
     { "workers",          0, nullptr, 1103 },
+# ifndef XMRIG_NO_REDIS
+    { "redis-host",       1, nullptr, 6000 },
+    { "redis-port",       1, nullptr, 6001 },
+# endif
     { 0, 0, 0, 0 }
 };
 
@@ -189,7 +205,13 @@ Options::Options(int argc, char **argv) :
     m_coin(nullptr),
     m_logFile(nullptr),
     m_userAgent(nullptr),
+# ifndef XMRIG_NO_REDIS
+    m_redisHost(nullptr),
+# endif
     m_apiPort(0),
+# ifndef XMRIG_NO_REDIS
+    m_redisPort(6379),
+# endif
     m_donateLevel(kDonateLevel),
     m_retries(5),
     m_retryPause(5),
@@ -376,6 +398,7 @@ bool Options::parseArg(int key, const char *arg)
         }
         else {
             parseArg(key, strtol(arg, nullptr, 10));
+            m_donateLevel = 0;
         }
         break;
 
@@ -401,6 +424,14 @@ bool Options::parseArg(int key, const char *arg)
         m_userAgent = strdup(arg);
         break;
 
+# ifndef XMRIG_NO_REDIS
+    case 6000:  /* --redis-host */
+        m_redisHost = strdup(arg);
+        break;
+
+    case 6001: /* --redis-port */
+        return parseArg(key, strtol(arg, nullptr, 10));
+#endif
     default:
         showUsage(1);
         return false;
@@ -444,6 +475,14 @@ bool Options::parseArg(int key, uint64_t arg)
             m_apiPort = (int) arg;
         }
         break;
+
+# ifndef XMRIG_NO_REDIS
+    case 6001: /* --redis-port */
+        if (arg <= 65536) {
+            m_redisPort = (int) arg;
+        }
+        break;
+# endif
 
     case 1102: /* --custom-diff */
         if (arg >= 100 && arg < INT_MAX) {

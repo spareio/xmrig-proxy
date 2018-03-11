@@ -48,6 +48,10 @@
 #   include "api/Httpd.h"
 #endif
 
+#ifndef XMRIG_NO_REDIS
+eredis_t *App::m_redis = nullptr;
+#endif
+
 App *App::m_self = nullptr;
 
 
@@ -83,6 +87,13 @@ App::App(int argc, char **argv) :
 
     Platform::init(m_options->userAgent());
 
+    /* XXX Should be new Redis()... */
+#ifndef XMRIG_NO_REDIS
+    m_redis     = eredis_new();
+    eredis_host_add(m_redis, Options::i()->redisHost(),
+                      Options::i()->redisPort());
+    eredis_run_thr( m_redis );
+#endif
     m_proxy = new Proxy(m_options);
 
     uv_signal_init(uv_default_loop(), &m_sigHUP);
@@ -94,7 +105,10 @@ App::App(int argc, char **argv) :
 App::~App()
 {
     uv_tty_reset_mode();
-
+#ifndef XMRIG_NO_REDIS
+    eredis_shutdown( m_redis );
+    eredis_free( m_redis );
+#endif
     delete m_console;
     delete m_proxy;
 

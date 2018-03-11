@@ -110,12 +110,19 @@ static void print_commands()
     }
 }
 
+static void print_redis()
+{
+
+  Log::i()->text(Options::i()->colors() ? "\x1B[01;32m * \x1B[01;37mREDIS:        \x1B[01;36m%s:%d" : " * REDIS:        %s:%d",
+      Options::i()->redisHost(), Options::i()->redisPort());
+}
 
 void Summary::print()
 {
     print_versions();
     print_pools();
     print_bind();
+    print_redis();
 
 #   ifndef XMRIG_NO_API
     print_api();
@@ -123,6 +130,3 @@ void Summary::print()
 
     print_commands();
 }
-
-
-

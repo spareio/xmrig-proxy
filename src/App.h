@@ -27,6 +27,9 @@
 
 #include <uv.h>
 
+#ifndef XMRIG_NO_REDIS
+#include <eredis.h>
+#endif
 
 #include "interfaces/IConsoleListener.h"
 
@@ -45,6 +48,10 @@ public:
 
   int exec();
 
+#ifndef XMRIG_NO_REDIS
+  static inline eredis_t* redis() { return m_redis; }
+#endif
+
 protected:
   void onConsoleCommand(char command) override;
 
@@ -55,6 +62,7 @@ private:
   static void onSignal(uv_signal_t *handle, int signum);
 
   static App *m_self;
+  static eredis_t *m_redis;
 
   Console *m_console;
   Httpd *m_httpd;

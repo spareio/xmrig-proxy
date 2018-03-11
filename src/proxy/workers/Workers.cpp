@@ -36,6 +36,11 @@
 #include "proxy/Miner.h"
 #include "proxy/workers/Workers.h"
 
+# ifndef XMRIG_NO_REDIS
+#include <eredis.h>
+#include <time.h>
+#include "App.h"
+# endif
 
 Workers::Workers() :
     m_enabled(Options::i()->workers())
@@ -169,6 +174,9 @@ void Workers::accept(const AcceptEvent *event)
 
     Worker &worker = m_workers[index];
     if (!event->isRejected()) {
+        eredis_w_cmd(App::redis(), "APPEND s:%s @%ld:%.2f",
+            worker.name(), time(nullptr), worker.hashrate(600));
+
         worker.add(event->result);
     }
     else {

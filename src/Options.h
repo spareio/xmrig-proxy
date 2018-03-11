@@ -55,9 +55,15 @@ public:
     inline const char *coin() const                { return m_userAgent; }
     inline const char *logFile() const             { return m_logFile; }
     inline const char *userAgent() const           { return m_userAgent; }
+# ifndef XMRIG_NO_REDIS
+    inline char *redisHost() const           { return m_redisHost; }
+# endif
     inline const std::vector<Addr*> &addrs() const { return m_addrs; }
     inline const std::vector<Url*> &pools() const  { return m_pools; }
     inline int apiPort() const                     { return m_apiPort; }
+# ifndef XMRIG_NO_REDIS
+    inline int redisPort() const                   { return m_redisPort; }
+# endif
     inline int donateLevel() const                 { return m_donateLevel; }
     inline int retries() const                     { return m_retries; }
     inline int retryPause() const                  { return m_retryPause; }
@@ -99,7 +105,13 @@ private:
     char *m_coin;
     char *m_logFile;
     char *m_userAgent;
+# ifndef XMRIG_NO_REDIS
+    char *m_redisHost;
+# endif
     int m_apiPort;
+# ifndef XMRIG_NO_REDIS
+    int m_redisPort;
+# endif
     int m_donateLevel;
     int m_retries;
     int m_retryPause;
