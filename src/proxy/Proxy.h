@@ -21,15 +21,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __PROXY_H__
-#define __PROXY_H__
+#ifndef XMRIG_PROXY_H
+#define XMRIG_PROXY_H
 
 
 #include <vector>
 #include <uv.h>
 
 
-#include "interfaces/IControllerListener.h"
+#include "common/interfaces/IControllerListener.h"
 #include "proxy/CustomDiff.h"
 #include "proxy/Stats.h"
 #include "proxy/workers/Worker.h"
@@ -39,6 +39,7 @@ class AccessLog;
 class Addr;
 class ISplitter;
 class Login;
+class Miner;
 class Miners;
 class Options;
 class ProxyDebug;
@@ -50,6 +51,7 @@ class Workers;
 
 namespace xmrig {
     class Controller;
+    class BindHost;
 }
 
 
@@ -67,6 +69,7 @@ public:
 
     const StatsData &statsData() const;
     const std::vector<Worker> &workers() const;
+    std::vector<Miner*> miners() const;
 
 #   ifdef APP_DEVEL
     void printState();
@@ -80,7 +83,7 @@ private:
     constexpr static int kGCInterval    = 60;
 
     bool isColors() const;
-    void bind(const Addr &addr);
+    void bind(const xmrig::BindHost &host);
     void gc();
     void print();
     void tick();
@@ -104,4 +107,4 @@ private:
 };
 
 
-#endif /* __PROXY_H__ */
+#endif /* XMRIG_PROXY_H */

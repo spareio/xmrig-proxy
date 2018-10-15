@@ -21,8 +21,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __SERVER_H__
-#define __SERVER_H__
+#ifndef XMRIG_SERVER_H
+#define XMRIG_SERVER_H
 
 
 #include <uv.h>
@@ -31,13 +31,15 @@
 #include "common/utils/c_str.h"
 
 
-class Addr;
+namespace xmrig {
+    class BindHost;
+}
 
 
 class Server
 {
 public:
-    Server(const Addr &addr, bool nicehash);
+    Server(const xmrig::BindHost &host, bool nicehash);
     bool bind();
 
 private:
@@ -51,7 +53,7 @@ private:
     sockaddr_in6 m_addr6;
     uint16_t m_port;
     uv_tcp_t m_server;
-    xmrig::c_str m_ip;
+    xmrig::c_str m_host;
 };
 
-#endif /* __SERVER_H__ */
+#endif /* XMRIG_SERVER_H */
